@@ -1,16 +1,31 @@
 require('dotenv').config();
-// include express
+const https = require('https');
+const fs = require('fs');
+
+// Include express 
 const express = require('express');
 const app = express();
 
-//include mongoose
+// Include Mongoose
 const mongoose = require('mongoose');
 
+// Connect to MongoDB
 mongoose.connect(process.env.DATABASE_URL);
+
+// Check for successful connection
 const db = mongoose.connection;
 db.on('error', (error) => console.log(error.message));
 db.once('open', () => console.log('Connected to Database'));
 
-app.listen(3000, () => console.log('Connected to Server'));
+app.use(express.json());
+const routers = require('./routers/router');
+const path = require('path');
+app.use(routers);
+app.listen(3000, () => { console.log('Connected to Server') });
 
-
+/*const sslServer=https.createServer({
+    key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
+    cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
+},app);
+sslServer.listen(3000,()=>{console.log('Connected to Server')});
+*/
