@@ -1,18 +1,14 @@
 //include mongoose
 const mongoose = require('mongoose');
-const Schema=mongoose.Schema;
+//const participantSchema=require('./participantModel');
 
-const schemaEvent = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  date: {
-    type: Date,
-    required: true
-  },
- 
+const { participantSchema } = require('./participantModel.js');
+
+const eventSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  participants: [participantSchema]
 });
+module.exports = mongoose.model('Event', eventSchema);
+module.exports.eventSchema = eventSchema; // Named export
 
-const EventModel = mongoose.model('EventModel', schemaEvent);
-module.exports = EventModel;
+//module.exports=eventSchema;

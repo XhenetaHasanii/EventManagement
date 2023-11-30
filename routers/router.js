@@ -1,27 +1,55 @@
 const mongoose = require('mongoose');
 
-const EventModel = require('../models/eventModel.js');
-const LocationModel = require('../models/locationModel.js');
-const ParticipantModel = require('../models/participantModel.js');
+const Event = require('../models/eventModel.js');
+const Location = require('../models/locationModel.js');
+const Participant = require('../models/participantModel.js');
 
 const express = require('express');
 const router = express.Router();
 
-
-
-router.post('/',async(req,res)=>{
-    const result=new LocationModel({
-        name:req.body.name,
-        address:req.body.address,
-        events:req.body.events
-    });
+router.post('/createLocation', async (req, res) => {
+    const result = new Location({
+        name: req.body.name,
+        address: req.body.address,
+        events: req.body.events
+    })
     try {
-        const newResult=await result.save();
-        res.status(201).json({'result':newResult});
-        
+        console.log(result);
+
+        const newLocation = await result.save();
+        res.status(201).json({ 'result': newLocation });
+
     } catch (error) {
-        res.status(500).json({'error':error.message});
-        
+        res.status(500).json({ 'error': error.message });
+
     }
 })
-module.exports=router;
+
+router.post('/createEvent', async (req, res) => {
+    const result = new Event({
+        name: req.body.name,
+        participants: req.body.participants
+
+    })
+    try {
+        const newResult = await result.save();
+        res.status(201).json({ 'result': newResult });
+    }
+    catch (error) {
+        res.status(500).json({ 'error': error.message });
+    }
+})
+router.post('/createParticipant', async (req, res) => {
+    const result = new Participant({
+        name: req.body.name,
+        email: req.body.email
+    })
+    try {
+        const newResult = await result.save();
+        res.status(201).json({ 'result': newResult });
+    }
+    catch (error) {
+        res.status(500).json({ 'error': error.message });
+    }
+})
+module.exports = router;

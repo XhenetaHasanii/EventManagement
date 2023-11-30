@@ -1,6 +1,4 @@
 require('dotenv').config();
-const https = require('https');
-const fs = require('fs');
 
 // Include express 
 const express = require('express');
@@ -21,11 +19,5 @@ app.use(express.json());
 const routers = require('./routers/router');
 const path = require('path');
 app.use(routers);
-app.listen(3000, () => { console.log('Connected to Server') });
 
-/*const sslServer=https.createServer({
-    key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
-    cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
-},app);
-sslServer.listen(3000,()=>{console.log('Connected to Server')});
-*/
+app.listen(3000, () => { console.log('Connected to Server') });
