@@ -6,7 +6,8 @@ const { participantSchema } = require('./participantModel.js');
 
 const eventSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  participants: [participantSchema]
+  participants: [participantSchema],
+  capacity:{ type:Number,required:true}
 });
 module.exports = mongoose.model('Event', eventSchema);
 module.exports.eventSchema = eventSchema; // Named export
