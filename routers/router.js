@@ -146,4 +146,16 @@ router.get('/fetchAllEvents/capacityIsNotFull', async (req, res) => {
         res.status(500).json({ 'message': error.message });
     }
 })
+
+
+router.get('/fetchParticipants/moreOneEvent', async (req, res) => {
+
+    try {
+        const result = await Event.find();
+        const newResult = result.filter((value) =>{ return value.participants && value.participants.name === "Xheneta"})
+        res.status(200).json({ 'newResult': result });
+    } catch (error) {
+        res.status(500).json({ 'error': error.message });
+    }
+})
 module.exports = router;
