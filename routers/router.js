@@ -85,8 +85,6 @@ router.post('/events/:eventId/participants', async (req, res) => {
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
-
-
         const { name, email } = req.body;
 
         const newParticipant = new Participant({ name, email });
@@ -96,7 +94,9 @@ router.post('/events/:eventId/participants', async (req, res) => {
         await event.save();
 
         res.json({ participant: newParticipant });
-    } catch (error) {
+
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -147,15 +147,39 @@ router.get('/fetchAllEvents/capacityIsNotFull', async (req, res) => {
     }
 })
 
-
-router.get('/fetchParticipants/moreOneEvent', async (req, res) => {
+/*outer.get('/fetchParticipants/moreOneEvent', async (req, res) => {
 
     try {
         const result = await Event.find();
-        const newResult = result.filter((value) =>{ return value.participants && value.participants.name === "Xheneta"})
+        const newResult = result.filter((value) => { return value.participants && value.participants.name === "Xheneta" })
         res.status(200).json({ 'newResult': result });
-    } catch (error) {
+    }
+    catch (error) {
         res.status(500).json({ 'error': error.message });
     }
-})
+})*/
+
+// return the location that has the most events
+router.get('/location-with-most-events', async (req, res) => {
+    try {
+      const locations = await Location.find().populate('events');
+      
+      let locationWithMostEvents = null;
+      let maxEventCount = 0;
+  
+      locations.forEach(location => {
+        const eventCount = location.events.length;
+        if (eventCount > maxEventCount) {
+          maxEventCount = eventCount;
+          locationWithMostEvents = location;
+        }
+      });
+  
+      res.json(locationWithMostEvents);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
 module.exports = router;
