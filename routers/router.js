@@ -11,7 +11,8 @@ router.post('/createLocation', async (req, res) => {
     const result = new Location({
         name: req.body.name,
         address: req.body.address,
-        events: req.body.events
+        events: req.body.events,
+
     })
     try {
         console.log(result);
@@ -162,24 +163,88 @@ router.get('/fetchAllEvents/capacityIsNotFull', async (req, res) => {
 // return the location that has the most events
 router.get('/location-with-most-events', async (req, res) => {
     try {
-      const locations = await Location.find().populate('events');
-      
-      let locationWithMostEvents = null;
-      let maxEventCount = 0;
-  
-      locations.forEach(location => {
-        const eventCount = location.events.length;
-        if (eventCount > maxEventCount) {
-          maxEventCount = eventCount;
-          locationWithMostEvents = location;
-        }
-      });
-  
-      res.json(locationWithMostEvents);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        const locations = await Location.find().populate('events');
+
+        let locationWithMostEvents = null;
+        let maxEventCount = 0;
+
+        locations.forEach(location => {
+            const eventCount = location.events.length;
+            if (eventCount > maxEventCount) {
+                maxEventCount = eventCount;
+                locationWithMostEvents = location;
+            }
+        });
+        res.json(locationWithMostEvents);
     }
-  });
-  
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+// create newLocation
+router.post('/createNewLocation', async (req, res) => {
+    const newLocation = new Location({
+        name: req.body.name,
+        address: req.body.address,
+        events: req.body.events
+    })
+    try {
+
+        const newResult = await newLocation.save();
+        res.status(201).json({ 'newResult': newResult });
+    }
+    catch (error) {
+        res.status(500).json({ 'newResult': error.message });
+    }
+
+})
+// return the locations that have less than 3 events
+router.get('/location-with-less-three-events', async (req, res) => {
+    try {
+        const locations = await Location.find().populate('events');
+
+        const filteredLocations = locations.filter((location) => {
+            return location.events.length < 3;
+        });
+
+        res.status(200).json({ 'result': filteredLocations });
+    } catch (error) {
+        res.status(500).json({ 'error': error.message });
+    }
+});
+// create newEvent
+router.post('/createNewEvent', async (req, res) => {
+
+    try {
+        const event = new Event({
+            name: req.body.name,
+            participants: req.body.participants,
+            capacity: req.body.capacity,
+            eventOccurred: req.body.eventOccurred
+        })
+        const newEvent = await event.save();
+        res.status(201).json({ 'newResult': newEvent });
+    }
+    catch (error) {
+        res.status(500).json({ 'error': error.message });
+    }
+
+})
+
+//create an endpoint that returns all the events held between December 1 and December 31, 2023
+router.get('/getEvents/test', async (req, res) => {
+
+    try {
+        const startDate = new Date('2023.12.01');
+        const endDate = new Date('2023.12.31');
+        const events = await Event.find({
+            eventOccurred: { $gte: startDate, $lte: endDate }
+        });
+        res.status(200).json({ 'newResult': events })
+    }
+    catch (error) {
+        res.status(500).json({ 'error': error.message })
+    }
+})
 module.exports = router;
